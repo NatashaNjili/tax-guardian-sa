@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalculatorRouteImport } from './routes/calculator'
+import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedSalaryRouteImport } from './routes/_authenticated/salary'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,9 +37,19 @@ const CalculatorRoute = CalculatorRouteImport.update({
   path: '/calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReceiptsRoute = AuthenticatedReceiptsRouteImport.update({
+  id: '/receipts',
+  path: '/receipts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSalaryRoute = AuthenticatedSalaryRouteImport.update({
@@ -50,14 +62,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/calculator': typeof CalculatorRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/calculator': typeof CalculatorRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
 }
 export interface FileRoutesById {
@@ -66,21 +82,39 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/calculator': typeof CalculatorRoute
+  '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/salary': typeof AuthenticatedSalaryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/calculator' | '/dashboard' | '/salary'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/calculator'
+    | '/alerts'
+    | '/dashboard'
+    | '/receipts'
+    | '/salary'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/calculator' | '/dashboard' | '/salary'
+  to:
+    | '/'
+    | '/auth'
+    | '/calculator'
+    | '/alerts'
+    | '/dashboard'
+    | '/receipts'
+    | '/salary'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/calculator'
+    | '/_authenticated/alerts'
     | '/_authenticated/dashboard'
+    | '/_authenticated/receipts'
     | '/_authenticated/salary'
   fileRoutesById: FileRoutesById
 }
@@ -121,11 +155,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/alerts': {
+      id: '/_authenticated/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedAlertsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/receipts': {
+      id: '/_authenticated/receipts'
+      path: '/receipts'
+      fullPath: '/receipts'
+      preLoaderRoute: typeof AuthenticatedReceiptsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/salary': {
@@ -139,12 +187,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedSalaryRoute: typeof AuthenticatedSalaryRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedSalaryRoute: AuthenticatedSalaryRoute,
 }
 
