@@ -15,6 +15,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
+import { Route as AuthenticatedProvisionRouteImport } from './routes/_authenticated/provision'
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedSalaryRouteImport } from './routes/_authenticated/salary'
 
@@ -47,6 +49,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProvisionRoute = AuthenticatedProvisionRouteImport.update({
+  id: '/provision',
+  path: '/provision',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReceiptsRoute = AuthenticatedReceiptsRouteImport.update({
   id: '/receipts',
   path: '/receipts',
@@ -64,6 +76,8 @@ export interface FileRoutesByFullPath {
   '/calculator': typeof CalculatorRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
+  '/provision': typeof AuthenticatedProvisionRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
 }
@@ -73,6 +87,8 @@ export interface FileRoutesByTo {
   '/calculator': typeof CalculatorRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
+  '/provision': typeof AuthenticatedProvisionRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
 }
@@ -84,6 +100,8 @@ export interface FileRoutesById {
   '/calculator': typeof CalculatorRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
+  '/_authenticated/provision': typeof AuthenticatedProvisionRoute
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/salary': typeof AuthenticatedSalaryRoute
 }
@@ -95,6 +113,8 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/alerts'
     | '/dashboard'
+    | '/ledger'
+    | '/provision'
     | '/receipts'
     | '/salary'
   fileRoutesByTo: FileRoutesByTo
@@ -104,6 +124,8 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/alerts'
     | '/dashboard'
+    | '/ledger'
+    | '/provision'
     | '/receipts'
     | '/salary'
   id:
@@ -114,6 +136,8 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/_authenticated/alerts'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ledger'
+    | '/_authenticated/provision'
     | '/_authenticated/receipts'
     | '/_authenticated/salary'
   fileRoutesById: FileRoutesById
@@ -169,6 +193,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ledger': {
+      id: '/_authenticated/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/provision': {
+      id: '/_authenticated/provision'
+      path: '/provision'
+      fullPath: '/provision'
+      preLoaderRoute: typeof AuthenticatedProvisionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/receipts': {
       id: '/_authenticated/receipts'
       path: '/receipts'
@@ -189,6 +227,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
+  AuthenticatedProvisionRoute: typeof AuthenticatedProvisionRoute
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedSalaryRoute: typeof AuthenticatedSalaryRoute
 }
@@ -196,6 +236,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
+  AuthenticatedProvisionRoute: AuthenticatedProvisionRoute,
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedSalaryRoute: AuthenticatedSalaryRoute,
 }
