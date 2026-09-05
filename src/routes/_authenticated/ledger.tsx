@@ -146,7 +146,7 @@ function LedgerPage() {
       const res = await summarise({
         data: { facts, language: profile?.preferred_language ?? "en" },
       });
-      setSummary(res.summary ?? res.reply ?? "");
+      setSummary(res.summary);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not write a summary right now.");
     } finally {
