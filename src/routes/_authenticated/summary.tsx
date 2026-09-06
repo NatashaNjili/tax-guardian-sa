@@ -88,7 +88,7 @@ function SummaryPage() {
       ...deposits.map((d) => [
         "Deposit",
         d.deposit_date,
-        d.source ?? "",
+        d.source_description ?? "",
         depositLabel(d.category),
         String(d.amount),
         "n/a",
@@ -104,7 +104,7 @@ function SummaryPage() {
       ...provisions.map((p) => [
         "Money set aside (not paid)",
         p.set_aside_date,
-        p.note ?? "",
+        p.notes ?? "",
         "Set aside",
         String(p.amount),
         "n/a",
@@ -206,7 +206,7 @@ function SummaryPage() {
               <tr key={d.id} className="border-b border-border/60">
                 <td className="py-2 pr-4">Deposit</td>
                 <td className="py-2 pr-4">{shortDate(d.deposit_date)}</td>
-                <td className="py-2 pr-4">{d.source ?? "—"}</td>
+                <td className="py-2 pr-4">{d.source_description ?? "—"}</td>
                 <td className="py-2 pr-4">{depositLabel(d.category)}</td>
                 <td className="num py-2 pr-4">{rands(d.amount, 0)}</td>
                 <td className="py-2">—</td>
@@ -226,7 +226,7 @@ function SummaryPage() {
               <tr key={p.id} className="border-b border-border/60">
                 <td className="py-2 pr-4">Set aside</td>
                 <td className="py-2 pr-4">{shortDate(p.set_aside_date)}</td>
-                <td className="py-2 pr-4">{p.note ?? "—"}</td>
+                <td className="py-2 pr-4">{p.notes ?? "—"}</td>
                 <td className="py-2 pr-4">Held, not paid</td>
                 <td className="num py-2 pr-4">{rands(p.amount, 0)}</td>
                 <td className="py-2">—</td>

@@ -93,18 +93,24 @@ function LedgerPage() {
   async function addDeposit(e: React.FormEvent) {
     e.preventDefault();
     if (!uid) return;
-    if (!dep.amount) return toast.error("Please enter the amount that came in.");
+    if (!dep.amount) {
+      toast.error("Please enter the amount that came in.");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.from("income_deposits").insert({
       user_id: uid,
       deposit_date: dep.deposit_date,
       amount: Number(dep.amount),
-      source: dep.source || null,
+      source_description: dep.source || null,
       category: dep.category,
       notes: dep.notes || null,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setDep({ ...dep, amount: "", source: "", notes: "", category: "untagged" });
     refresh(["deposits"]);
     toast.success("Deposit recorded.");
@@ -112,7 +118,10 @@ function LedgerPage() {
 
   async function retag(id: string, category: string) {
     const { error } = await supabase.from("income_deposits").update({ category }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["deposits"]);
   }
 
@@ -121,13 +130,19 @@ function LedgerPage() {
       .from("expense_records")
       .update({ category, needs_review: false })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["expenses"]);
   }
 
   async function removeDeposit(id: string) {
     const { error } = await supabase.from("income_deposits").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["deposits"]);
   }
 
@@ -280,7 +295,7 @@ function LedgerPage() {
             {deposits.map((d) => (
               <div key={d.id} className="surface flex flex-wrap items-center gap-3 p-4 text-sm">
                 <div className="min-w-36">
-                  <p className="font-medium">{d.source || "Unknown source"}</p>
+                  <p className="font-medium">{d.source_description || "Unknown source"}</p>
                   <p className="text-xs text-muted-foreground">{shortDate(d.deposit_date)}</p>
                 </div>
                 <p className="num min-w-28 font-medium">{rands(d.amount)}</p>
@@ -366,7 +381,7 @@ function LedgerPage() {
             VAT registration becomes compulsory once turnover passes {rands(vat.compulsory, 0)} in
             any 12 months, and you may register voluntarily above {rands(vat.voluntary, 0)}. Your
             tagged income so far is {rands(totals.income, 0)}
-            {business?.is_vat_registered ? " and you are marked as VAT registered." : "."}
+            {business?.vat_registered ? " and you are marked as VAT registered." : "."}
           </p>
         ) : null}
       </section>

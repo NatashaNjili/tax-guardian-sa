@@ -68,7 +68,10 @@ function SalaryPage() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!uid || !config?.active) return;
-    if (gross <= 0) return toast.error("Please enter at least a basic salary.");
+    if (gross <= 0) {
+      toast.error("Please enter at least a basic salary.");
+      return;
+    }
     setBusy(true);
     try {
       const est = estimateMonthlyPaye(config.active, gross, Number(form.age) || 30);

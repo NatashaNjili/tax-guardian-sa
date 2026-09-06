@@ -41,10 +41,12 @@ export function thresholdFor(thresholds: Thresholds, age: number): number {
 /** Progressive tax on annual taxable income, before rebates. */
 export function taxBeforeRebates(brackets: Bracket[], annualIncome: number) {
   const income = Math.max(0, annualIncome);
+  const fallback: Bracket = { min: 0, max: null, rate: 0, base: 0 };
   const bracket =
     brackets.find((b) => income >= b.min && (b.max === null || income <= b.max)) ??
-    brackets[brackets.length - 1];
-  const tax = bracket.base + (income - bracket.min + (bracket.min > 0 ? 1 : 0)) * bracket.rate;
+    brackets[brackets.length - 1] ??
+    fallback;
+  const tax = bracket.base + Math.max(0, income - bracket.min) * bracket.rate;
   return { tax: Math.max(0, tax), bracket };
 }
 
@@ -128,8 +130,7 @@ export const payeStatusMeta: Record<
 export function calculateTurnoverTax(bands: TurnoverBand[] | null, annualTurnover: number) {
   if (!bands || bands.length === 0) return null;
   const band =
-    bands.find((b) => annualTurnover >= b.min && (b.max === null || annualTurnover <= b.max)) ??
-    null;
+    bands.find((b) => annualTurnover >= b.min && (b.max === null || annualTurnover <= b.max)) ?? null;
   if (!band) return null;
   return {
     band,

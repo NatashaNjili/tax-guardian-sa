@@ -86,7 +86,10 @@ function SettingsPage() {
       })
       .eq("id", uid);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["profile"]);
     toast.success("Saved.");
   }
@@ -109,7 +112,10 @@ function SettingsPage() {
       ? await supabase.from("business_profiles").update(payload).eq("user_id", uid)
       : await supabase.from("business_profiles").insert(payload);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["business-profile"]);
     toast.success("Business details saved.");
   }
