@@ -87,17 +87,23 @@ function ProvisionPage() {
   async function add(e: React.FormEvent) {
     e.preventDefault();
     if (!uid) return;
-    if (!form.amount) return toast.error("Please enter the amount you put aside.");
+    if (!form.amount) {
+      toast.error("Please enter the amount you put aside.");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.from("tax_provisions").insert({
       user_id: uid,
       tax_year: year,
       set_aside_date: form.set_aside_date,
       amount: Number(form.amount),
-      note: form.note || null,
+      notes: form.note || null,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setForm({ ...form, amount: "", note: "" });
     refresh(["provisions"]);
     toast.success("Recorded. Remember: this money is still yours until SARS receives it.");
@@ -105,7 +111,10 @@ function ProvisionPage() {
 
   async function remove(id: string) {
     const { error } = await supabase.from("tax_provisions").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["provisions"]);
   }
 
@@ -204,7 +213,7 @@ function ProvisionPage() {
                 <span className="min-w-32">{shortDate(p.set_aside_date)}</span>
                 <span className="num min-w-28 font-medium">{rands(p.amount)}</span>
                 <Badge variant="outline">Held, not paid to SARS</Badge>
-                <span className="text-muted-foreground">{p.note}</span>
+                <span className="text-muted-foreground">{p.notes}</span>
                 <span className="flex-1" />
                 <Button size="sm" variant="ghost" onClick={() => remove(p.id)} aria-label="Delete entry">
                   <Trash2 className="size-4" aria-hidden />

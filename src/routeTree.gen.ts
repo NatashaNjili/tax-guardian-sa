@@ -20,6 +20,7 @@ import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedProvisionRouteImport } from './routes/_authenticated/provision'
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedSalaryRouteImport } from './routes/_authenticated/salary'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSummaryRouteImport } from './routes/_authenticated/summary'
 
 const IndexRoute = IndexRouteImport.update({
@@ -76,6 +77,11 @@ const AuthenticatedSalaryRoute = AuthenticatedSalaryRouteImport.update({
   path: '/salary',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSummaryRoute = AuthenticatedSummaryRouteImport.update({
   id: '/summary',
   path: '/summary',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/provision': typeof AuthenticatedProvisionRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/summary': typeof AuthenticatedSummaryRoute
 }
 export interface FileRoutesByTo {
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/provision': typeof AuthenticatedProvisionRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/salary': typeof AuthenticatedSalaryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/summary': typeof AuthenticatedSummaryRoute
 }
 export interface FileRoutesById {
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/_authenticated/provision': typeof AuthenticatedProvisionRoute
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/salary': typeof AuthenticatedSalaryRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/summary': typeof AuthenticatedSummaryRoute
 }
 export interface FileRouteTypes {
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/provision'
     | '/receipts'
     | '/salary'
+    | '/settings'
     | '/summary'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/provision'
     | '/receipts'
     | '/salary'
+    | '/settings'
     | '/summary'
   id:
     | '__root__'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/_authenticated/provision'
     | '/_authenticated/receipts'
     | '/_authenticated/salary'
+    | '/_authenticated/settings'
     | '/_authenticated/summary'
   fileRoutesById: FileRoutesById
 }
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSalaryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/summary': {
       id: '/_authenticated/summary'
       path: '/summary'
@@ -270,6 +289,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProvisionRoute: typeof AuthenticatedProvisionRoute
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedSalaryRoute: typeof AuthenticatedSalaryRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSummaryRoute: typeof AuthenticatedSummaryRoute
 }
 
@@ -281,6 +301,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProvisionRoute: AuthenticatedProvisionRoute,
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedSalaryRoute: AuthenticatedSalaryRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSummaryRoute: AuthenticatedSummaryRoute,
 }
 

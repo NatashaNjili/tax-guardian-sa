@@ -106,7 +106,10 @@ function ReceiptsPage() {
 
   async function save() {
     if (!uid || !draft) return;
-    if (!draft.amount) return toast.error("Please enter the amount on the slip.");
+    if (!draft.amount) {
+      toast.error("Please enter the amount on the slip.");
+      return;
+    }
     setSaving(true);
     try {
       let path: string | null = null;
@@ -145,7 +148,10 @@ function ReceiptsPage() {
 
   async function remove(id: string) {
     const { error } = await supabase.from("expense_records").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["expenses"]);
   }
 

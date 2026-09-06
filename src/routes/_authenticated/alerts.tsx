@@ -39,7 +39,10 @@ function AlertsPage() {
   async function cycle(id: string, status: string) {
     const next = STATUS_NEXT[status] ?? "reviewing";
     const { error } = await supabase.from("tax_alerts").update({ status: next }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh(["alerts"]);
   }
 
