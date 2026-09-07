@@ -38,13 +38,12 @@ function SettingsPage() {
   const { data: config } = useTaxConfig();
   const refresh = useRefresh();
 
-  const [p, setP] = useState({ full_name: "", preferred_language: "en", user_type: "employee", age: "30" });
+  const [p, setP] = useState({ full_name: "", preferred_language: "en", user_type: "employee" });
   const [b, setB] = useState({
     business_name: "",
-    business_type: "sole_proprietor",
-    is_vat_registered: false,
-    is_provisional_taxpayer: false,
-    annual_turnover_estimate: "",
+    tax_election: "standard",
+    vat_registered: false,
+    estimated_annual_turnover: "",
   });
   const [busy, setBusy] = useState(false);
   const [demoBusy, setDemoBusy] = useState(false);
@@ -55,7 +54,6 @@ function SettingsPage() {
         full_name: profile.full_name ?? "",
         preferred_language: profile.preferred_language ?? "en",
         user_type: profile.user_type ?? "employee",
-        age: String(profile.age ?? 30),
       });
   }, [profile]);
 
@@ -63,11 +61,10 @@ function SettingsPage() {
     if (business)
       setB({
         business_name: business.business_name ?? "",
-        business_type: business.business_type ?? "sole_proprietor",
-        is_vat_registered: !!business.is_vat_registered,
-        is_provisional_taxpayer: !!business.is_provisional_taxpayer,
-        annual_turnover_estimate: business.annual_turnover_estimate
-          ? String(business.annual_turnover_estimate)
+        tax_election: business.tax_election ?? "standard",
+        vat_registered: !!business.vat_registered,
+        estimated_annual_turnover: business.estimated_annual_turnover
+          ? String(business.estimated_annual_turnover)
           : "",
       });
   }, [business]);
@@ -82,7 +79,6 @@ function SettingsPage() {
         full_name: p.full_name || null,
         preferred_language: p.preferred_language,
         user_type: p.user_type,
-        age: Number(p.age) || 30,
       })
       .eq("id", uid);
     setBusy(false);
@@ -100,13 +96,10 @@ function SettingsPage() {
     setBusy(true);
     const payload = {
       user_id: uid,
-      business_name: b.business_name || null,
-      business_type: b.business_type,
-      is_vat_registered: b.is_vat_registered,
-      is_provisional_taxpayer: b.is_provisional_taxpayer,
-      annual_turnover_estimate: b.annual_turnover_estimate
-        ? Number(b.annual_turnover_estimate)
-        : null,
+      business_name: b.business_name || "My business",
+      tax_election: b.tax_election,
+      vat_registered: b.vat_registered,
+      estimated_annual_turnover: Number(b.estimated_annual_turnover || 0),
     };
     const { error } = business
       ? await supabase.from("business_profiles").update(payload).eq("user_id", uid)
@@ -125,10 +118,9 @@ function SettingsPage() {
     setDemoBusy(true);
     try {
       const now = new Date();
-      const months = [3, 2, 1, 0].map((back) => {
-        const d = new Date(now.getFullYear(), now.getMonth() - back, 1);
-        return d.toISOString().slice(0, 10);
-      });
+      const monthAt = (back: number) =>
+        new Date(now.getFullYear(), now.getMonth() - back, 1).toISOString().slice(0, 10);
+      const months: string[] = [monthAt(3), monthAt(2), monthAt(1), monthAt(0)];
       const salaryRows = months.map((month, i) => {
         const gross = 21500 + i * 500;
         const est = estimateMonthlyPaye(config.active!, gross, 30).estimatedPaye;
@@ -153,24 +145,24 @@ function SettingsPage() {
         };
       });
       const deposits = [
-        { d: months[3], a: 8400, s: "Thandi's Spaza order", c: "business_sale" },
-        { d: months[2], a: 12750, s: "Market weekend takings", c: "business_sale" },
-        { d: months[1], a: 5000, s: "Loan from cousin", c: "loan" },
-        { d: months[0], a: 3200, s: "Unknown EFT", c: "untagged" },
+        { d: monthAt(3), a: 8400, s: "Thandi's Spaza order", c: "business_sale" },
+        { d: monthAt(2), a: 12750, s: "Market weekend takings", c: "business_sale" },
+        { d: monthAt(1), a: 5000, s: "Loan from cousin", c: "loan" },
+        { d: monthAt(0), a: 3200, s: "Unknown EFT", c: "untagged" },
       ].map((r) => ({
         user_id: uid,
         deposit_date: r.d,
         amount: r.a,
-        source: r.s,
+        source_description: r.s,
         category: r.c,
         is_demo: true,
       }));
       const expenses = [
-        { d: months[3], v: "Makro", a: 4300, c: "cost_of_sales", cap: false },
-        { d: months[2], v: "Engen garage", a: 950, c: "transport", cap: false },
-        { d: months[2], v: "Vodacom", a: 349, c: "telephone_data", cap: false },
-        { d: months[1], v: "Game", a: 6200, c: "capital_asset", cap: true },
-        { d: months[0], v: "Landlord", a: 2500, c: "rent", cap: false },
+        { d: monthAt(3), v: "Makro", a: 4300, c: "cost_of_sales", cap: false },
+        { d: monthAt(2), v: "Engen garage", a: 950, c: "transport", cap: false },
+        { d: monthAt(2), v: "Vodacom", a: 349, c: "telephone_data", cap: false },
+        { d: monthAt(1), v: "Game", a: 6200, c: "capital_asset", cap: true },
+        { d: monthAt(0), v: "Landlord", a: 2500, c: "rent", cap: false },
       ].map((r) => ({
         user_id: uid,
         expense_date: r.d,
@@ -192,9 +184,9 @@ function SettingsPage() {
         supabase.from("tax_provisions").insert({
           user_id: uid,
           tax_year: currentTaxYear(),
-          set_aside_date: months[1],
+          set_aside_date: monthAt(1),
           amount: 2500,
-          note: "Demo: moved to savings",
+          notes: "Demo: moved to savings",
           is_demo: true,
         }),
       ]);
@@ -232,11 +224,6 @@ function SettingsPage() {
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
           <Input id="name" value={p.full_name} onChange={(e) => setP({ ...p, full_name: e.target.value })} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="age">Age</Label>
-          <Input id="age" inputMode="numeric" value={p.age} onChange={(e) => setP({ ...p, age: e.target.value })} />
-          <p className="text-xs text-muted-foreground">Age changes the rebates you qualify for.</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="language">Preferred language</Label>
@@ -280,16 +267,15 @@ function SettingsPage() {
           <Input id="bname" value={b.business_name} onChange={(e) => setB({ ...b, business_name: e.target.value })} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="btype">Type</Label>
-          <Select value={b.business_type} onValueChange={(v) => setB({ ...b, business_type: v })}>
+          <Label htmlFor="btype">How is your business taxed?</Label>
+          <Select value={b.tax_election} onValueChange={(v) => setB({ ...b, tax_election: v })}>
             <SelectTrigger id="btype">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="sole_proprietor">Sole proprietor (just me)</SelectItem>
-              <SelectItem value="partnership">Partnership</SelectItem>
-              <SelectItem value="company">Registered company</SelectItem>
-              <SelectItem value="informal">Informal trading</SelectItem>
+              <SelectItem value="standard">Normal income tax on profit</SelectItem>
+              <SelectItem value="turnover">Turnover tax (worked out on sales)</SelectItem>
+              <SelectItem value="unsure">I am not sure yet</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -298,24 +284,17 @@ function SettingsPage() {
           <Input
             id="turnover"
             inputMode="decimal"
-            value={b.annual_turnover_estimate}
-            onChange={(e) => setB({ ...b, annual_turnover_estimate: e.target.value })}
+            value={b.estimated_annual_turnover}
+            onChange={(e) => setB({ ...b, estimated_annual_turnover: e.target.value })}
           />
         </div>
         <div className="flex flex-col justify-end gap-3">
           <label className="flex items-center gap-2 text-sm">
             <Checkbox
-              checked={b.is_vat_registered}
-              onCheckedChange={(v) => setB({ ...b, is_vat_registered: !!v })}
+              checked={b.vat_registered}
+              onCheckedChange={(v) => setB({ ...b, vat_registered: !!v })}
             />
             I am registered for VAT
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox
-              checked={b.is_provisional_taxpayer}
-              onCheckedChange={(v) => setB({ ...b, is_provisional_taxpayer: !!v })}
-            />
-            I am a provisional taxpayer (I estimate my tax twice a year)
           </label>
         </div>
         <div className="sm:col-span-2">
